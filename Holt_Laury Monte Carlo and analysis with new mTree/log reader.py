@@ -2,6 +2,8 @@ import csv
 import itertools
 import numpy as np
 
+'''This is a log reader for output of Holt Laury simulation'''
+
 with open("experiment.log") as in_file, open("HL.csv", "w") as out_file:
     writer = csv.writer(out_file)
     writer.writerow(["experiment", "run", "theta", "delta",  "choice1", "choice2","choice3","choice4","choice5","choice6","choice7","choice8","choice9","choice10","epsilon", "numA", "expected numA", "hits", "switch","cross_term"])

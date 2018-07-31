@@ -1,12 +1,12 @@
-# Basic Includes
+
 from mTree.microeconomic_system.directive_decorators import *
 from mTree.microeconomic_system.message import Message
 from mTree.microeconomic_system.container import Container
 
 # Includes needed to send the class objects to be instantiated in the actor system
-from lottery_agent import BasicAgent
-from lottery_envrionment import BasicEnvironment
-from lottery_institution import BasicInstitution
+from lottery_agent import LotteryAgent
+from lottery_envrionment import LotteryEnvironment
+from lottery_institution import LotteryInstitution
 import random as rnd
 
 print("This is the monte carlo simulation for lottery choosing agents")
@@ -19,6 +19,9 @@ container.create_root_environment(BasicEnvironment)
 container.setup_environment_institution(BasicInstitution)
 # create agent for the purposes of the experiment
 container.setup_environment_agents(BasicAgent, 1)
+
+'''This is the MES for Holt_Laury lotteries simulation, by changing the looping, num_experiment, num_runs, and epsilon, we can
+have continuous/fixed theta, delta and epsilon''' #It is currently having continous delta and theta
 
 
 '''run monte carlo experiment with continuous delta and theta'''
@@ -60,11 +63,12 @@ for m in range(num_experiments): #m experiments
         message.set_sender("external")
         message.set_directive("create_bundle")
         payload = {}
-        payload["reward_A_1"] = 2 # sets the reward for all of the choices
+        # sets the reward for all of the choices
+        payload["reward_A_1"] = 2
         payload["reward_A_2"] = 1.60
         payload["reward_B_1"] = 3.85
         payload["reward_B_2"] = .1
-        payload["num_rows"] = 10 #sets the number of rows
+        payload["num_rows"] = 10 #sets the number of rows of lotteries
         payload["experiment"] = m # num of experiment is on
         payload["run"] = run
         message.set_payload(payload)

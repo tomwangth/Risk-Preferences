@@ -5,7 +5,7 @@ import random
 import csv
 
 @directive_enabled_class
-class BasicInstitution(Institution):
+class LotteryInstitution(Institution):
 
     def __init__(self):
         self.agents = []
@@ -131,9 +131,10 @@ class BasicInstitution(Institution):
             print("Outcome in this run:", temp_round_list)
             self.outcome = temp_round_list
             self.choice_outcome = [self.experiment, self.run, self.theta, self.delta, self.outcome, self.epsilon]
+            #send chioce_outcome to experiment log
             self.experiment_log([self.experiment, self.run, self.theta, self.delta,  self.outcome, self.epsilon])
             self.outcome_history = {} # reset outcome_history
-
+        #we can also write a csv file with self.choice_outcome
             #w = csv.writer(open("Holt_Laury_Output raw2.csv", "a"))
             #w.writerow(self.choice_outcome)
 

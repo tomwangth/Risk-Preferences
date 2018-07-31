@@ -4,7 +4,7 @@ from mTree.microeconomic_system.directive_decorators import *
 
 
 @directive_enabled_class
-class BasicEnvironment(Environment):
+class LotteryEnvironment(Environment):
     def __init__(self):
         self.institutions = []
         self.agents = []
@@ -130,7 +130,7 @@ class BasicEnvironment(Environment):
 
     @directive_decorator("start_experiment")
     def start_experiment(self, message: Message):
-        '''Start the actual experiment'''
+        '''Start the actual experiment, institution will ask agent to make choice'''
 
         message = Message()
         message.set_sender(self)

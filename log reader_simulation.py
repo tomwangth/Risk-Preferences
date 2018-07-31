@@ -3,6 +3,8 @@ import numpy as np
 import ast
 import pandas as pd
 
+'''A general log reader for simulation output'''
+
 class log_reader(object):
 
     def __init__(self):

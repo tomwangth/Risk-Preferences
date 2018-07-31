@@ -9,7 +9,7 @@ from lottery_envrionment import BasicEnvironment
 from lottery_institution import BasicInstitution
 import random as rnd
 
-print("This is the monte carlo simulation for lottery choosing agents")
+print("Based on Holt Laury, you will get your rewards and risk preferences parameter")
 
 # instantiating the container
 container = Container()

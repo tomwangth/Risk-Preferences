@@ -5,15 +5,15 @@ import numpy as np
 import math as mat
 
 @directive_enabled_class
-class BasicAgent(Agent):
+class LotteryAgent(Agent):
     def __init__(self):
         self.theta = None # for making sure it is changed every run
         self.delta = None # for making sure it is changed every run
         self.epsilon = None # for making sure it is changed every run
-        self.error = None #realized delta
-        self.e = None  # for realized epsilon
-        self.choice = []
-        self.institutions =[] # make sure to populate this
+        self.error = None #realized delta value
+        self.e = None  # realized epsilon value
+        self.choice = [] #record agent's choice
+        self.institutions =[]
         self.payoff = []
 
 
@@ -28,13 +28,13 @@ class BasicAgent(Agent):
 
     @directive_decorator("fill_in_institution")
     def fill_in_institution(self, message: Message):
-        ''' let the agent know the institution '''
+        ''' register agent in the institution '''
 
         payload = message.get_payload()
         self.institutions = payload["institutions"]
 
     def CRRA(self,value,theta):
-        ''' CRRA calculation'''
+        ''' CRRA evaluation'''
 
         if theta == 1.0:
             if value == 0.0:  # Handle value = 0.0
@@ -49,7 +49,7 @@ class BasicAgent(Agent):
 
     @directive_decorator("make_choice")
     def make_choice(self, message:Message):  # get row from bundle
-        '''agent makes their choice'''
+        '''agent making choice'''
 
         #the agents gets the row and sd
         payload = message.get_payload()
@@ -58,15 +58,15 @@ class BasicAgent(Agent):
         delta = self.delta
 
         #calculates the theta w/ triangularlly distributed delta
-        if delta ==0:
+        if delta == 0:
             self.error = 0
         else:
             self.error = np.random.triangular(-delta, 0, delta)
 
         theta = self.theta + self.error
 
-        OptionA = row[0] # tuple of option 1
-        OptionB = row[1] # tuple of optoin 2
+        OptionA = row[0] # set optionA
+        OptionB = row[1] # set optionB
 
         if len(OptionA) != len(OptionB):  # ensure that there is no error in the row data
             raise ValueError("Length of options must be the same")
@@ -100,7 +100,7 @@ class BasicAgent(Agent):
         util_a = prob_a1 * out_a1 + prob_a2 * out_a2 + self.e
         util_b = prob_b1 * out_b1 + prob_b2 * out_b2 + self.e
 
-        # selects and records the option with larger expected utility
+        # selects and records the option according to agent's preferences
         if util_a > util_b:
             self.choice.append(OptionA)
 

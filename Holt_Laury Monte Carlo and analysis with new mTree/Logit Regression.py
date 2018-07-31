@@ -4,6 +4,8 @@ import sklearn
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+'Logit regression for Holt Laury simulation output, plus graphing ROC curve'
+
 # Receive Data
 data = pd.read_csv("HL.csv")
 print(data)

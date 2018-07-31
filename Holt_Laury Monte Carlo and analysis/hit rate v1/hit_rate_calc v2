@@ -1,0 +1,143 @@
+import csv
+import ast
+import pandas as pd
+import re
+import sympy as sp
+import matplotlib.pyplot as plt
+import numpy as np
+
+#pull data out from csv file
+class Receive_Data(object):
+    def __init__(self):
+        self.theta_list = []
+        self.delta_list = []
+        self.num_A = 0
+        self.result_list = []
+
+    def open_file(self, file_name):
+
+        with open(file_name) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                temp_list = row
+                for item in ast.literal_eval(row[4]):
+                    if "A" in item:
+                        self.num_A += 1
+                temp_list.append(self.num_A)
+                self.num_A = 0
+                self.result_list.append(temp_list)
+        return self.result_list
+
+result_list = Receive_Data().open_file("Holt_Laury_Output.csv")
+print("result_list:", result_list)
+
+#pair = run
+#every run has 10 observations
+# reorganize the data in df
+class DataFrame(object):
+    def __init__(self):
+        self.result_list = Receive_Data().open_file("Holt_Laury_Output.csv")
+        self.total_row = len(self.result_list)
+        self.index_range = range(1,self.total_row+1) # rearrange index of df
+        self.df = None
+        self.num_period  = self.result_list[len(self.result_list)-1][0]
+        #self.num_runs = self.result_list[len(self.result_list)-1][1]
+        self.monte_trials = self.result_list[len(self.result_list)-1][1]
+        self.theta_list = []
+        self.delta_list = []
+
+
+    def create_df(self):
+        new_index  = []
+        for i in self.index_range:
+            new_index.append(i)
+        self.df = pd.DataFrame(result_list, columns=["periods", "runs", "theta", "sd", "outcome", "num_A"],
+                          index=new_index)  # create dataframe
+        return self.df
+
+    def get_theta(self):
+        for list in self.result_list:
+            if ast.literal_eval(list[2]) not in self.theta_list:
+                self.theta_list.append(ast.literal_eval(list[2]))
+            else:
+                pass
+        return self.theta_list
+
+    def get_delta(self):
+        for list in self.result_list:
+            if ast.literal_eval(list[3]) not in self.delta_list:
+                self.delta_list.append(ast.literal_eval(list[3]))
+            else:
+                pass
+        return self.delta_list
+
+#get specifics from dataframe
+df = DataFrame().create_df()
+print(df)
+num_period = DataFrame().num_period
+#num_run = DataFrame().num_runs
+num_monte_trials  = int(DataFrame().monte_trials) + 1
+print("num_period:",num_period, "\n", "num_monte_trials:",num_monte_trials)
+theta_list = DataFrame().get_theta()
+num_runs = int(len(theta_list))
+delta_list = DataFrame().get_delta()
+print("theta_list:",theta_list, "\n", "delta_list:",delta_list)
+print("num_subjects/runs:", num_runs)
+
+#set rules of holt_laury for CRRA coefficient
+class Holt_Laury(object):
+    def __init__(self):
+        self.num_A = None
+
+    def return_hit_num(self, theta):
+        if -0.15 <= theta < 0.15:
+            self.num_A = 4
+        elif 0.15 <= theta < 0.41:
+            self.num_A = 5
+        elif 0.41 <= theta < 0.68:
+            self.num_A = 6
+        elif 0.68 <= theta < 0.97:
+            self.num_A = 7
+        elif 0.97 <= theta < 1.356:
+            self.num_A = 8
+        elif theta < -0.49:
+            self.num_A = 2
+        elif -0.49 <= theta < -0.15:
+            self.num_A = 3
+        return self.num_A
+
+class Hit_Calculator(object): # this needs to be fixed, together with mTree
+    def __init__(self):
+        self.hit_rate  = None
+        self.experiments_numA_list = []
+        self.holt_laury_numA_list = []
+
+    # pull from df the actual num_A from monte_carlo
+    def monte_numA(self):
+        temp_whole_list = df["num_A"].tolist()
+        temp_list = []
+        temp_numA = []
+        for i in range(int(num_period)):
+            temp_list = temp_whole_list[10*i: 10*i+10]
+            temp_numA.append(temp_list)
+
+        for k in range(int(num_experiment)):
+            self.experiments_numA_list = []
+
+        return self.experiments_numA_list
+
+####this is already a monte carlo so I should be having 40 data points here
+###yes so for each delta we have 4 different theta, calculate the hit rate within thetas, and for each experiment's monte carlo, we have 10 points
+##also make sure things are right in mTree, in each experiment delta don't vary, delta pair with n subjects(in this case 4), but in differnt  monte carlo trials, delta varies.
+#however tho, in this mont, deltas don't change yet, need to fix this in mTree
+
+#print(Hit_Calculator().experiments_numA())
+
+#pull from df the actual num_A from monte_carlo
+
+#holt_laury numA with theta list
+
+
+#a get hit rate class?
+
+
